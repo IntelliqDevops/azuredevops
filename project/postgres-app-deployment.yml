@@ -9,7 +9,7 @@ metadata:
 spec:
   selector:
     matchLabels:
-     name: psotgres-app
+     name: postgres-app
   template:
     metadata:
       name: postgres-app-pod
