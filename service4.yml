@@ -12,6 +12,6 @@ spec:
      port: 80
      nodePort: 30010
   selector:
-    author: intelliqit
-    type: webserver
+    
+    type: proxy
 ...
