@@ -8,6 +8,8 @@ metadata:
     author: intelliqit
 spec:
   replicas: 1
+  strategy:
+    type: Recreate 
   selector:
     matchLabels:
       type: proxy
@@ -18,8 +20,8 @@ spec:
        type: proxy
     spec:
       containers:
-        - name: mynginx
-          image: nginx
+        - name: nginx
+          image: nginx:1.26
           ports:
            - containerPort: 80
 ...
