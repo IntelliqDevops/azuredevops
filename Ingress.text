@@ -1,0 +1,53 @@
+Ingress
+=========================
+
+
+Create a Static public ip
+==================================
+# Get the resource group name of the AKS cluster 
+az aks show --resource-group myresource --name cluster-1 --query nodeResourceGroup -o tsv
+
+# TEMPLATE - Create a public IP address with the static allocation
+az network public-ip create --resource-group <REPLACE-OUTPUT-RG-FROM-PREVIOUS-COMMAND> --name myAKSPublicIPForIngress --sku Standard --allocation-method static --query publicIp.ipAddress -o tsv
+
+# REPLACE - Create Public IP: Replace Resource Group value
+az network public-ip create --resource-group MC_pv_aks3_eastus --name myAKSPublicIPForIngress --sku Standard --allocation-method static --query publicIp.ipAddress -o tsv
+
+52.149.161.56
+
+Install Ingress Controller
+====================================
+Create a namespace with a name test-ingress 
+
+# Add the official stable repository
+helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+helm repo update
+
+#  Customizing the Chart Before Installing. 
+helm show values ingress-nginx/ingress-nginx
+
+# Use Helm to deploy an NGINX ingress controller
+helm install ingress-nginx ingress-nginx/ingress-nginx \
+    --namespace test-ingress \
+    --set controller.replicaCount=2 \
+    --set controller.nodeSelector."kubernetes\.io/os"=linux \
+    --set defaultBackend.nodeSelector."kubernetes\.io/os"=linux \
+    --set controller.service.externalTrafficPolicy=Local \
+    --set controller.service.loadBalancerIP="REPLACE_STATIC_IP" 
+
+
+# List Services in test-ingress namespace
+kubectl get service  --namespace test-ingress
+
+# List Pods
+kubectl get pods -n test-ingress
+kubectl get all -n test-ingress
+
+# Access Public IP
+http://<Public-IP-created-for-Ingress>
+
+# Output should be
+404 Not Found from Nginx
+
+Search for LoadBalancer--->Settings-->Frontend ip confogurations 
+we should see a loadbalancer with out public static ip
