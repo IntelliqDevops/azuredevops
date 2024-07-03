@@ -1,0 +1,24 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+ name: app3-httpd-deployment
+ labels:
+   app: app3-httpd
+spec:
+  replicas: 1
+  selector:
+   matchLabels:
+     app: app3-httpd
+  template:
+   metadata:
+     name: app3-httpd-pod
+     labels:
+      app: app3-httpd
+   spec:
+     containers:
+      - name: app3-httpd
+        image: httpd
+        ports:
+         - containerPort: 80
+...
